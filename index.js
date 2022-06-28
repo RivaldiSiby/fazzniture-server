@@ -6,10 +6,12 @@ const db = require("./src/config/db");
 const cloudConfig = require("./src/config/cloudinary");
 const cors = require("cors");
 const morgan = require("morgan");
+const { redisCon } = require("./src/config/redis");
 
 const server = express();
 const PORT = process.env.PORT || 8080;
 
+redisCon();
 db.connect()
   .then(() => {
     server.use(express.json());
@@ -18,7 +20,7 @@ db.connect()
     // pasang cors
     const corsOptions = {
       origin: ["http://localhost:3000", "https://fazzniture.netlify.app"],
-      methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+      methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS", "PUT"],
       allowedHeaders: ["Content-Type", "Authorization"],
     };
 
@@ -37,6 +39,8 @@ db.connect()
 
     server.listen(PORT, () => {
       console.log(`App listening on port ${PORT}`);
+      console.log(`${process.env.REDIS_PASSWORD}`);
+      console.log(`${process.env.REDIS_DATABASE_URI}`);
     });
   })
   .catch((error) => {
