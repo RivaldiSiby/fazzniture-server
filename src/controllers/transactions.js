@@ -118,7 +118,6 @@ const showAllTransactions = async (req, res) => {
       result = await getAllTransactionsUser(req.query, user_id);
     }
     //  path
-    console.log(result);
     let queryPath = "";
     result.query.map((item) => {
       queryPath += `${item.query}=${item.value}&`;
