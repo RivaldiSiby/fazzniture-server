@@ -77,6 +77,9 @@ const getAllTransaction = async (query) => {
           }
 
           queryList.push({ query: "sort", value: query.sort });
+          if (query.order !== undefined) {
+            queryList.push({ query: "order", value: query.order });
+          }
         }
 
         queryKey.push(limit);
@@ -156,6 +159,9 @@ const getAllTransactionsUser = (query, id) => {
           }
 
           queryList.push({ query: "sort", value: query.sort });
+          if (query.order !== undefined) {
+            queryList.push({ query: "order", value: query.order });
+          }
         }
 
         queryKey.push(limit);
@@ -235,6 +241,9 @@ const getAllTransactionsSeller = async (query, id) => {
       }
 
       queryList.push({ query: "sort", value: query.sort });
+      if (query.order !== undefined) {
+        queryList.push({ query: "order", value: query.order });
+      }
     }
 
     queryKey.push(limit);

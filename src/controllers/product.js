@@ -81,6 +81,8 @@ const getAllProductControllers = async (req, res) => {
         ? 1
         : req.query.page;
 
+    // cek seller
+
     const products = await getAllProduct(req.query);
 
     if (products.data.length === 0) {
@@ -105,8 +107,112 @@ const getAllProductControllers = async (req, res) => {
         }
       });
     });
-    // handler file
-    const productsFix = await waitFile;
+    // handler file\
+    let productsFix = await waitFile;
+    // atur sort
+    if (req.query.sort !== undefined) {
+      if (req.query.order === undefined) {
+        productsFix = productsFix.sort((a, b) => a.price - b.price);
+      }
+      if (req.query.order !== undefined) {
+        productsFix =
+          req.query.order.toLowerCase() === "desc"
+            ? productsFix.sort((a, b) => b.price - a.price)
+            : productsFix.sort((a, b) => a.price - b.price);
+      }
+    }
+
+    //  path
+    let queryPath = "";
+    products.query.map((item) => {
+      queryPath += `${item.query}=${item.value}&`;
+    });
+    const nextPage = parseInt(req.query.page) + 1;
+    const prevPage = parseInt(req.query.page) - 1;
+
+    let next =
+      nextPage > products.totalPage
+        ? {}
+        : { next: `/product?${queryPath}page=${nextPage}` };
+    let prev =
+      req.query.page <= 1
+        ? {}
+        : { prev: `/product?${queryPath}page=${prevPage}` };
+
+    //   meta
+    const meta = {
+      totalData: products.totalData,
+      totalPage: products.totalPage,
+      page: req.query.page,
+      ...next,
+      ...prev,
+    };
+
+    res.status(200).json({
+      data: productsFix,
+      meta,
+    });
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+const getAllProductSellerControllers = async (req, res) => {
+  try {
+    // cek query page
+    req.query.page =
+      req.query.page === undefined
+        ? 1
+        : req.query.page === ""
+        ? 1
+        : req.query.page;
+
+    // cek seller
+    if (req.userPayload.role === "seller") {
+      return res.status(403).json({
+        msg: "you are not a seller",
+      });
+    }
+
+    const products = await getAllProduct(req.query, req.userPayload.id);
+
+    if (products.data.length === 0) {
+      return res.status(404).json({
+        msg: "Product Not Found",
+      });
+    }
+    const waitFile = new Promise((resolve, reject) => {
+      let countFile = 0;
+      let productsFix = [];
+      products.data.map(async (data) => {
+        try {
+          const file = await getSingelFile(data.product_id);
+          countFile += 1;
+          data.file = file.file;
+          productsFix.push(data);
+          if (countFile === products.data.length) {
+            return resolve(productsFix);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+    // handler file\
+    let productsFix = await waitFile;
+    // atur sort
+    if (req.query.sort !== undefined) {
+      if (req.query.order === undefined) {
+        productsFix = productsFix.sort((a, b) => a.price - b.price);
+      }
+      if (req.query.order !== undefined) {
+        productsFix =
+          req.query.order.toLowerCase() === "desc"
+            ? productsFix.sort((a, b) => b.price - a.price)
+            : productsFix.sort((a, b) => a.price - b.price);
+      }
+    }
 
     //  path
     let queryPath = "";
@@ -272,6 +378,7 @@ const getAllSize = async (req, res) => {
 module.exports = {
   createProductsControllers,
   getSingleProductsControllers,
+  getAllProductSellerControllers,
   getAllProductControllers,
   getAllFavoriteControllers,
   updateProductControllers,

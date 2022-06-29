@@ -79,14 +79,12 @@ const showAllTransactions = async (req, res) => {
     }
     if (role === "seller") {
       const products = await getAllTransactionsSeller(req.query, user_id);
-      console.log(products);
       const waitFile = new Promise((resolve, reject) => {
         let countFile = 0;
         let productsFix = [];
         products.data.map(async (data) => {
           try {
             const file = await getSingelFile(data.product_id);
-            console.log(file);
             countFile += 1;
             data.file = file.file;
             productsFix.push(data);
@@ -99,14 +97,28 @@ const showAllTransactions = async (req, res) => {
         });
       });
       // handler file
-
       products.data = await waitFile;
+
       result = products;
+
+      // atur sort
+      if (req.query.sort !== undefined) {
+        if (req.query.order === undefined) {
+          result.data = result.data.sort((a, b) => a.price - b.price);
+        }
+        if (req.query.order !== undefined) {
+          result.data =
+            req.query.order.toLowerCase() === "desc"
+              ? result.data.sort((a, b) => b.price - a.price)
+              : result.data.sort((a, b) => a.price - b.price);
+        }
+      }
     }
     if (role === "coustomer") {
       result = await getAllTransactionsUser(req.query, user_id);
     }
     //  path
+    console.log(result);
     let queryPath = "";
     result.query.map((item) => {
       queryPath += `${item.query}=${item.value}&`;

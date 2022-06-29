@@ -21,7 +21,6 @@ const createProducts = (body, seller_id) => {
       updated_at,
     ])
       .then((result) => {
-        console.log(result.rows);
         const response = result.rows[0];
         resolve(response.id);
       })
@@ -111,7 +110,7 @@ const getSingelFile = async (id) => {
   }
 };
 
-const getAllProduct = async (query) => {
+const getAllProduct = async (query, id = null) => {
   try {
     // cek query
     const byCategory = Object.keys(query).find((item) => item === "category");
@@ -195,11 +194,16 @@ const getAllProduct = async (query) => {
       }
 
       queryList.push({ query: "sort", value: query.sort });
+      if (query.order !== undefined) {
+        queryList.push({ query: "order", value: query.order });
+      }
     }
 
     const sqlQuery =
       "select p.id as product_id ,s.id as stock_id,p.name,p.description,c.name as category ,b.name as brand, s2.name as size,s.price,s.unit_stock, s.condition as stock_condition,c2.name as color ,c2.class_color,p.seller_id ,u.store as seller,p.created_at ,p.updated_at  from product p inner join stock s on s.product_id = p.id inner join brands b on b.id = p.brands_id inner join category c on c.id = p.category_id inner join colors c2 on c2.id = p.colors_id inner join users u on p.seller_id = u.id inner join size s2 on s.size_id = s2.id ";
-    const sqlCek = `WHERE ${textQuery + queryRange} p.deleted_at = 'false' `;
+    const sqlCek = `WHERE ${
+      id !== null ? "p.seller_id = " + `'${id}'` + " and " : ""
+    } ${textQuery + queryRange} p.deleted_at = 'false' `;
 
     // pagination
     const { page = 1, limit = 12 } = query;

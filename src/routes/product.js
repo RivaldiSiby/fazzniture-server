@@ -10,6 +10,11 @@ Router.post(
   productControllers.createProductsControllers
 );
 Router.get("/fav", productControllers.getAllFavoriteControllers);
+Router.get(
+  "/myproduct",
+  middleware.verifyToken,
+  productControllers.getAllProductSellerControllers
+);
 Router.get("/", productControllers.getAllProductControllers);
 Router.get("/:id", productControllers.getSingleProductsControllers);
 Router.patch("/:id", productControllers.updateProductControllers);
