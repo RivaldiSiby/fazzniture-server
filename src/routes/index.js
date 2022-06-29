@@ -1,5 +1,4 @@
-const Router = require('express').Router();
-
+const Router = require("express").Router();
 
 const pingRouter = require("./ping");
 const usersRoutes = require("./users");
@@ -20,4 +19,11 @@ Router.use("/brands", brandRouter);
 Router.use("/categories", categoryRouter);
 Router.use("/colors", colorRouter);
 Router.use("/sizes", sizeRouter);
+
+// not found API
+Router.get("*", function (req, res) {
+  res.status(404).send({
+    msg: "API not found",
+  });
+});
 module.exports = Router;
