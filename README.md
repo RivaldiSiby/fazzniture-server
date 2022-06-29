@@ -82,6 +82,8 @@ Link project : [Fazzniture](https://fazzniture.netlify.app/)
 - [uuid](https://www.npmjs.com/package/uuidv4)
 - [Eslint](https://www.npmjs.com/package/eslint)
 - [Nodemon](https://www.npmjs.com/package/nodemon)
+- [Redis](https://www.npmjs.com/package/redis)
+- [NodeMailer](https://www.npmjs.com/package/nodemailer)
 
 <br>
 
