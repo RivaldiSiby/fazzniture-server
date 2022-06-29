@@ -67,7 +67,10 @@ const getSingleProductsControllers = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    throw error;
+    res.status(400).json({
+      error: true,
+      message: error.message,
+    });
   }
 };
 
@@ -154,7 +157,10 @@ const getAllProductControllers = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    throw error;
+    res.status(400).json({
+      error: true,
+      message: error.message,
+    });
   }
 };
 
@@ -246,7 +252,10 @@ const getAllProductSellerControllers = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    throw error;
+    res.status(400).json({
+      error: true,
+      message: error.message,
+    });
   }
 };
 
@@ -282,7 +291,10 @@ const getAllFavoriteControllers = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    throw error;
+    res.status(400).json({
+      error: true,
+      message: error.message,
+    });
   }
 };
 
@@ -320,7 +332,9 @@ const updateProductControllers = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    throw error;
+    res.status(400).json({
+      error,
+    });
   }
 };
 const getAllBrand = async (req, res) => {
